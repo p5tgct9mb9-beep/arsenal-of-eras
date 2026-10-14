@@ -35,7 +35,7 @@ function gbaPass(){const t0=performance.now();for(const k in SPR){if(k=='logo'){
  G.fillRect=(x,y,w,h)=>{const X0=s2(x),Y0=s2(y);let X1=s2(x+w),Y1=s2(y+h);if(X1==X0)X1=X0+1/GBA_K;if(Y1==Y0)Y1=Y0+1/GBA_K;fr(X0,Y0,X1-X0,Y1-Y0)};
  G.drawImage=function(im,a,b,c,d,e,f,g,h){if(arguments.length==3)return di(im,s2(a),s2(b));if(arguments.length==5)return di(im,s2(a),s2(b),c,d);return di(im,a,b,c,d,s2(e),s2(f),g,h)}}
 // integer scaling + letterbox (device pixels)
-function gbaFit(){const c=document.getElementById('c');if(!c)return;const dpr=window.devicePixelRatio||1,iw=innerWidth*dpr,ih=innerHeight*dpr;let k=Math.floor(Math.min(iw/(320/GBA.blk*2),ih/(180/GBA.blk*2)));if(k<1)k=Math.min(iw/(320/GBA.blk*2),ih/(180/GBA.blk*2));
+function gbaFit(){const c=document.getElementById('c');if(!c)return;const dpr=window.devicePixelRatio||1,iw=innerWidth*dpr,ih=innerHeight*dpr;let k=RETRO?Math.floor(Math.min(iw/(320/GBA.blk*2),ih/(180/GBA.blk*2))):Math.min(iw/640,ih/360);if(k<1)k=Math.min(iw/(320/GBA.blk*2),ih/(180/GBA.blk*2));
  const cw=640/GBA.blk*k/dpr,ch=360/GBA.blk*k/dpr;Object.assign(c.style,{width:cw+'px',height:ch+'px',left:((innerWidth-cw)/2)+'px',top:((innerHeight-ch)/2)+'px',maxWidth:'none',maxHeight:'none',margin:'0',inset:'auto'})}
 addEventListener('resize',gbaFit);addEventListener('orientationchange',()=>setTimeout(gbaFit,200));setTimeout(gbaFit,0);
 
