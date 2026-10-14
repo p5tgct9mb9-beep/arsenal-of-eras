@@ -17,13 +17,13 @@ function frame(){TF.t++;pollPad();G.setTransform(GBA_K,0,0,GBA_K,0,0);updParts()
  else if(st=='assault'){if(jp.has('Escape')&&!TF.as.done){TF.state='unit';TF.as=null;parts=[];drawMenuBg()}else{updAssault();drawAssault()}}
  jp.clear();
  let sx=0,sy=0;if(shake>0){sx=(R()-.5)*shake*S;sy=(R()-.5)*shake*S;shake*=.85;if(shake<.3)shake=0}
- X.imageSmoothingEnabled=false;X.fillStyle='#000';X.fillRect(0,0,1920,1080);X.drawImage(L,Math.round(sx/6)*6,Math.round(sy/6)*6,1920,1080);
+ X.imageSmoothingEnabled=false;X.fillStyle='#000';X.fillRect(0,0,1920,1080);X.drawImage(L,Math.round(sx/3)*3,Math.round(sy/3)*3,1920,1080);
  if(fade>0){X.fillStyle=`rgba(0,0,0,${fade/20})`;X.fillRect(0,0,1920,1080);fade--}
  drawHUD();if(TF.state=='role')drawRoleSelect();if(TF.state=='vpick')drawVPick();if(TF.state=='drive')drawDriveHUD();if(TF.state=='air')drawAirHUD();if(TF.state=='tut')drawTutHUD();requestAnimationFrame(frame)}
 function init(){const mk=pb=>({c:pb.canvas(),w:pb.canvas(true)}),mkB=pb=>{rimLight(pb,[220,236,255],.28);return mk(pb)};
  // vehicles: bosses (tank,t62,mbt,mech), hazards (jet), air-strike flybys (p47,f4,apache,hover)
  SPR.tank=mk(mkTigerHD());SPR.abrams=mk(mkAbramsHD());SPR.f22=mk(mkF22HD());SPR.f15=mk(mkF15HD());SPR.p47=mk(mkP47());SPR.jet=mk(mkMe262());SPR.f4=mk(mkF4());SPR.t62=mk(mkT62HD());SPR.apache=mk(mkApache());SPR.mbt=mk(mkT90HD());SPR.hover=mk(mkHover());SPR.mech=mkB(mkMech());SPR.orbital=mkB(mkOrbital());SPR.lander=mk(mkLander());
- SPR.logo=mkLogo();buildModeArt(mk);buildModeArt2(mk);buildAceArt(mk);SPR.chute=mk(mkChute());
+ SPR.logo=mkLogo();buildModeArt(mk);buildModeArt2(mk);buildRealArt(mk);buildAceArt(mk);SPR.chute=mk(mkChute());
  for(const id in ROSTERS)for(const u of ROSTERS[id])SPR['u_'+u.key]=[0,1,2,3,4,5,6].map(f=>mk(mkTrooperE(u,f)));
  for(const id in LTH){SPR['bot_'+id]=[0,1].map(f=>mk(mkBot(LTH[id].bot,f)));SPR['drone_'+id]=[0,1].map(f=>mk(mkDrone(LTH[id].bot,f)))}
  for(const e of ERAS)BBG[e.id]=buildBB(e);TF.sheet=makeSheet;TF.unitSheet=makeUnitSheet;TF.styleSheet=()=>makeStyleSheet().toDataURL('image/png');TF.modeSheet=makeModeSheet;gbaPass();TF.ready=true;requestAnimationFrame(frame)}

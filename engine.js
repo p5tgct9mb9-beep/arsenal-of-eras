@@ -2,7 +2,7 @@
 // Arsenal of Eras - HD preview. 640x360 pixel scene, 3x scaled to 1920x1080, HUD at full res.
 const W=640,H=360,S=3;
 const C=document.getElementById('c'),X=C.getContext('2d');
-const GBA_K=.5;const L=document.createElement('canvas');L.width=W*GBA_K;L.height=H*GBA_K;const G=L.getContext('2d');
+const GBA_K=1;const L=document.createElement('canvas');L.width=W*GBA_K;L.height=H*GBA_K;const G=L.getContext('2d');
 X.imageSmoothingEnabled=false;G.imageSmoothingEnabled=false;
 // ---------- RNG / noise ----------
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}

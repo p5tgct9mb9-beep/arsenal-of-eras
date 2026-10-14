@@ -18,8 +18,8 @@ function wheelHD(pb,x,y,r,rW,bolts=8,dark){if(typeof rW=='function')rW=R5([92,90
  for(let k=0;k<bolts;k++){const a=k/bolts*6.283;pb.set(Math.round(x+Math.cos(a)*r*.55),Math.round(y+Math.sin(a)*r*.55),rW[4])}}
 function antenna(pb,x,y0,y1,c=[40,40,40]){for(let y=y0;y<=y1;y++)pb.set(x,y,c);pb.set(x,y0,[90,90,90])}
 // --- Tiger I ---
-function mkTigerHD(){const pb=new PB(284,122);const Y=R5([196,166,96]),O=R5([104,110,54]),B=R5([124,76,42]),T=R5([70,68,64]),M=R5([92,90,84]);
- const cam=(i,j)=>{const s=Math.sin(i*.105-j*.19+fbm(i*.03,j*.03)*2.4);return s>.55?O:s<-.7?B:Y};
+function mkTigerHD(){const pb=new PB(284,122);const Y=R5([176,156,104]),O=R5([92,98,62]),B=R5([108,78,52]),T=R5([66,64,60]),M=R5([88,86,80]);
+ const cam=(i,j)=>{const a=fbm(i*.035+3,j*.06),b=fbm(i*.045+21,j*.07+9);return a>.64?O:b>.66?B:Y};
  trackHD(pb,14,262,74,114,T);
  for(let k=0;k<8;k++)wheelHD(pb,62+k*24.5,94,14,cam,8,1); // inner row
  for(let k=0;k<8;k++)wheelHD(pb,50+k*24.5,98,15,cam,10);
