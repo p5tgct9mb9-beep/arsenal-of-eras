@@ -26,7 +26,7 @@ function init(){const mk=pb=>({c:pb.canvas(),w:pb.canvas(true)}),mkB=pb=>{rimLig
  SPR.logo=mkLogo();buildModeArt(mk);buildModeArt2(mk);buildRealArt(mk);buildAceArt(mk);SPR.chute=mk(mkChute());
  for(const id in ROSTERS)for(const u of ROSTERS[id])SPR['u_'+u.key]=[0,1,2,3,4,5,6].map(f=>mk(mkTrooperE(u,f)));
  for(const id in LTH){SPR['bot_'+id]=[0,1].map(f=>mk(mkBot(LTH[id].bot,f)));SPR['drone_'+id]=[0,1].map(f=>mk(mkDrone(LTH[id].bot,f)))}
- for(const e of ERAS)BBG[e.id]=buildBB(e);TF.sheet=makeSheet;TF.unitSheet=makeUnitSheet;TF.styleSheet=()=>makeStyleSheet().toDataURL('image/png');TF.modeSheet=makeModeSheet;gbaPass();TF.ready=true;requestAnimationFrame(frame)}
+ for(const e of ERAS)BBG[e.id]=buildBB(e);TF.sheet=makeSheet;TF.unitSheet=makeUnitSheet;TF.styleSheet=()=>makeStyleSheet().toDataURL('image/png');TF.modeSheet=makeModeSheet;buildRealArt2(mk);gbaPass();TF.ready=true;requestAnimationFrame(frame)}
 init();
 
 function makeSheet(){const c=document.createElement('canvas');c.width=1920;c.height=1500;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.fillStyle='#1a1c26';g.fillRect(0,0,1920,1500);
