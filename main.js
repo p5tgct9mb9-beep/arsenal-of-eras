@@ -17,7 +17,7 @@ function frame(){TF.t++;pollPad();G.setTransform(GBA_K,0,0,GBA_K,0,0);updParts()
  else if(st=='assault'){if(jp.has('Escape')&&!TF.as.done){TF.state='unit';TF.as=null;parts=[];drawMenuBg()}else{updAssault();drawAssault()}}
  jp.clear();
  let sx=0,sy=0;if(shake>0){sx=(R()-.5)*shake*S;sy=(R()-.5)*shake*S;shake*=.85;if(shake<.3)shake=0}
- X.imageSmoothingEnabled=NATIVE;X.fillStyle='#000';X.fillRect(0,0,1920,1080);X.drawImage(L,Math.round(sx/3)*3,Math.round(sy/3)*3,1920,1080);X.imageSmoothingEnabled=false;if(window.postFX)postFX();
+ X.imageSmoothingEnabled=SMOOTHBLIT;X.fillStyle='#000';X.fillRect(0,0,1920,1080);if(window.GC3D&&GC3D.lastT===TF.t)X.drawImage(GC3D.canvas,Math.round(sx/3)*3,Math.round(sy/3)*3,1920,1080);X.drawImage(L,Math.round(sx/3)*3,Math.round(sy/3)*3,1920,1080);X.imageSmoothingEnabled=false;if(window.postFX)postFX();
  if(fade>0){X.fillStyle=`rgba(0,0,0,${fade/20})`;X.fillRect(0,0,1920,1080);fade--}
  drawHUD();if(TF.state=='role')drawRoleSelect();if(TF.state=='vpick')drawVPick();if(TF.state=='drive')drawDriveHUD();if(TF.state=='air')drawAirHUD();if(TF.state=='tut')drawTutHUD();requestAnimationFrame(frame)}
 function init(){const mk=pb=>({c:pb.canvas(),w:pb.canvas(true)}),mkB=pb=>{rimLight(pb,[220,236,255],.28);return mk(pb)};

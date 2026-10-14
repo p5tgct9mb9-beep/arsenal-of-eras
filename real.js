@@ -1,3 +1,4 @@
+const REC={on:0,depth:0,tag:null,parts:[]};const recP=p=>{if(REC.on&&!REC.depth)REC.parts.push(p)};
 'use strict';
 // ---- "Realistic pixel" pass: accurate side-view silhouettes for all picker vehicles/aircraft.
 // 7-step ramps, top-light + edge highlights, panel lines, rivets, road wheels/tracks, weathering. Native 640x360.
@@ -125,8 +126,8 @@ function mkROrbtank(){const pb=rLandBase(),M=[208,210,216];rPart(pb,[[4,40],[142
 function rAir(w,h,fn){const pb=new PB(w,h),sx=w/100,sy=h/40,S=pts=>pts.map(([x,y])=>[x*sx,y*sy]);
  const A={pb,w,h,P:(pts,b,o)=>rPart(pb,S(pts),b,o),E:(x,y,rx,ry,b,o)=>rE(pb,x*sx,y*sy,rx*sx,ry*sy,b,o),L:(x0,y0,x1,y1,hl)=>rLine(pb,x0*sx,y0*sy,x1*sx,y1*sy,hl),
   Rv:(x0,y,x1,st)=>rRiv(pb,x0*sx|0,y*sy|0,x1*sx|0,st),dark:(pts,c=[26,28,32])=>rSolid(pb,S(pts),c),
-  prop:(x,y0,y1)=>{for(let y=y0*sy|0;y<=y1*sy;y++){pb.set(x*sx|0,y,(y&1)?[70,70,66]:[150,150,144]);if(y%3==0)pb.set((x*sx|0)+1,y,[110,110,104])}rE(pb,x*sx,(y0+y1)/2*sy,2.4,2.6,[150,40,30])},
-  can:(pts,tint=[70,96,118])=>{rPart(pb,S(pts),tint,{top:.9,bot:.45,bev:1});const b=S(pts);const x0=Math.min(...b.map(p=>p[0])),x1=Math.max(...b.map(p=>p[0])),y0=Math.min(...b.map(p=>p[1]));for(let x=x0+2;x<x0+(x1-x0)*.5;x++){const p=pb.get(x|0,(y0|0)+2);if(p)pb.set(x|0,(y0|0)+2,[220,232,240])}}};
+  prop:(x,y0,y1)=>{recP({t:'prop',x:x*sx,y0:y0*sy,y1:y1*sy});REC.depth++;for(let y=y0*sy|0;y<=y1*sy;y++){pb.set(x*sx|0,y,(y&1)?[70,70,66]:[150,150,144]);if(y%3==0)pb.set((x*sx|0)+1,y,[110,110,104])}rE(pb,x*sx,(y0+y1)/2*sy,2.4,2.6,[150,40,30]);REC.depth--},
+  can:(pts,tint=[70,96,118])=>{REC.tag='can';rPart(pb,S(pts),tint,{top:.9,bot:.45,bev:1});REC.tag=null;const b=S(pts);const x0=Math.min(...b.map(p=>p[0])),x1=Math.max(...b.map(p=>p[0])),y0=Math.min(...b.map(p=>p[1]));for(let x=x0+2;x<x0+(x1-x0)*.5;x++){const p=pb.get(x|0,(y0|0)+2);if(p)pb.set(x|0,(y0|0)+2,[220,232,240])}}};
  fn(A);return pb}
 const rJetDone=(pb,dust=[110,110,108],a=.25)=>{rWeather(pb,dust,a);return rFin(pb)};
 function mkRF22(w,h){return rJetDone(rAir(w,h,A=>{const M=RP.fgray,D=rDk(M,.2);A.P([[10,14],[17,1],[25,1],[30,15]],D);A.P([[2,24],[22,22],[26,26],[4,28]],D);
@@ -167,7 +168,7 @@ function mkRB25(w,h,o={}){return rJetDone(rAir(w,h,A=>{const M=o.col||RP.od,B=o.
  A.P([[4,15],[40,12],[80,12],[92,14],[98,19],[92,24],[80,25],[40,25],[6,22]],(i,j)=>j>A.h*.55?B:M,{top:.88,bot:.42,round:.1});A.P([[90,13],[98,17],[98,22],[90,24]],[110,130,140],{top:.9});for(let x=91;x<98;x+=3)A.L(x,14,x,23,0);
  A.can([[70,11],[74,7],[84,8],[86,12]]);A.E(50,10,4,3,[100,120,130]);A.P([[46,15],[72,15],[78,19],[72,23],[46,23]],M,{top:.86,bot:.4,round:.1});A.prop(80,6,32);A.E(79,19,2,2,[60,60,56]);
  A.P([[30,21],[66,20],[72,26],[34,27]],rLt(M,.04),{top:.7});A.L(10,18,90,17);A.Rv(10,20,88,5);if(!o.enemy)rStar(A.pb,(26*w/100)|0,(18*h/40)|0,3)}))}
-function mkRHeli(w,h,o){return rJetDone(rAir(w,h,A=>{const M=o.col;const rot=(y,x0,x1)=>{for(let x=x0*w/100|0;x<x1*w/100;x++){A.pb.set(x,y*h/40|0,[40,40,40]);if(x%3)A.pb.set(x,(y*h/40|0)-1,[90,90,88])}};
+function mkRHeli(w,h,o){return rJetDone(rAir(w,h,A=>{const M=o.col;const rot=(y,x0,x1)=>{recP({t:'rotor',x0:x0*w/100,x1:x1*w/100,y:y*h/40});for(let x=x0*w/100|0;x<x1*w/100;x++){A.pb.set(x,y*h/40|0,[40,40,40]);if(x%3)A.pb.set(x,(y*h/40|0)-1,[90,90,88])}};
  if(o.k=='huey'){A.P([[2,14],[50,16],[50,22],[2,20]],M,{top:.86});A.P([[0,8],[6,8],[8,20],[2,20]],M);A.E(4,14,3,5,[60,60,58],{bev:0});A.P([[44,12],[86,10],[98,18],[98,30],[86,34],[44,34]],M,{top:.86,bot:.42,round:.1});
   A.P([[86,13],[96,18],[96,26],[86,26]],[90,110,118],{top:.9});A.P([[60,16],[74,16],[74,30],[60,30]],[30,32,30]);A.P([[56,6],[80,6],[82,12],[54,12]],M);rot(5,8,98);A.P([[48,36],[96,36],[96,38],[48,38]],[50,50,48]);A.L(56,34,54,37);A.L(88,34,90,37);A.Rv(48,26,84,6);if(o.pods)A.P([[60,30],[76,30],[76,34],[60,34]],[80,82,74])}
  else if(o.k=='cobra'){A.P([[2,18],[48,18],[48,22],[2,22]],M,{top:.86});A.P([[0,8],[6,8],[8,22],[2,22]],M);A.E(4,15,3,5,[60,60,58],{bev:0});A.P([[40,14],[80,12],[98,20],[94,28],[80,30],[44,28]],M,{top:.86,bot:.42,round:.1});

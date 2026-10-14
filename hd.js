@@ -33,10 +33,10 @@ if(!RETRO){
   if(arguments.length==3)di(H2,a,b,im.width,im.height);else if(arguments.length==5)di(H2,a,b,c,d);else{const k=H2.width/im.width;di(H2,a*k,b*k,c*k,d*k,e,f,g,h)}ctx.imageSmoothingEnabled=sm}};
  wrap(G);wrap(X)}
 // per-frame post FX (PSP: soft bloom; Vita: bloom + vignette + light grade). Cheap: two small blits.
-const PFX={};if(NATIVE){PFX.b=document.createElement('canvas');PFX.b.width=120;PFX.b.height=68;PFX.bg=PFX.b.getContext('2d');
- if(STYLE=='vita'){const v=document.createElement('canvas');v.width=480;v.height=270;const g=v.getContext('2d'),gr=g.createRadialGradient(240,135,60,240,135,290);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,10,.45)');g.fillStyle=gr;g.fillRect(0,0,480,270);PFX.v=v}}
-function postFX(){if(!NATIVE)return;const g=PFX.bg;g.imageSmoothingEnabled=true;g.globalCompositeOperation='copy';g.drawImage(L,0,0,120,68);g.globalCompositeOperation='source-over';
- X.save();X.imageSmoothingEnabled=true;X.globalCompositeOperation='lighter';X.globalAlpha=STYLE=='psp'?.13:.1;X.drawImage(PFX.b,0,0,1920,1080);X.globalCompositeOperation='source-over';X.globalAlpha=1;if(PFX.v)X.drawImage(PFX.v,0,0,1920,1080);X.restore()}
+const PFX={};if(SMOOTHBLIT){PFX.b=document.createElement('canvas');PFX.b.width=120;PFX.b.height=68;PFX.bg=PFX.b.getContext('2d');
+ if(STYLE=='vita'||STYLE=='gc'){const v=document.createElement('canvas');v.width=480;v.height=270;const g=v.getContext('2d'),gr=g.createRadialGradient(240,135,60,240,135,290);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,10,.45)');g.fillStyle=gr;g.fillRect(0,0,480,270);PFX.v=v}}
+function postFX(){if(!SMOOTHBLIT)return;const SRC=window.GC3D&&GC3D.lastT===TF.t?GC3D.canvas:L;const g=PFX.bg;g.imageSmoothingEnabled=true;g.globalCompositeOperation='copy';g.drawImage(SRC,0,0,120,68);g.globalCompositeOperation='source-over';
+ X.save();X.imageSmoothingEnabled=true;X.globalCompositeOperation='lighter';X.globalAlpha=STYLE=='psp'?.13:STYLE=='gc'?.14:.1;X.drawImage(PFX.b,0,0,1920,1080);X.globalCompositeOperation='source-over';X.globalAlpha=1;if(PFX.v)X.drawImage(PFX.v,0,0,1920,1080);X.restore()}
 // retro toggle: P on title/era screens (or ?retro=1)
 addEventListener('keydown',e=>{if(e.code=='KeyP'&&typeof TF!='undefined'&&(TF.state=='title'||TF.state=='era')){try{localStorage.setItem('aoe_style',STYLES[(STYLES.indexOf(STYLE)+1)%4]);localStorage.removeItem('aoe_retro')}catch(_){}location.href=location.pathname}});
 addEventListener('pointerdown',e=>{if(typeof TF!='undefined'&&(TF.state=='title'||TF.state=='era')&&e.clientX>innerWidth*.6&&e.clientY>innerHeight*.9){try{localStorage.setItem('aoe_style',STYLES[(STYLES.indexOf(STYLE)+1)%4])}catch(_){}location.href=location.pathname}});

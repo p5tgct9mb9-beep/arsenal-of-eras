@@ -2,7 +2,7 @@
 // Arsenal of Eras - HD preview. 640x360 pixel scene, 3x scaled to 1920x1080, HUD at full res.
 const W=640,H=360,S=3;
 const C=document.getElementById('c'),X=C.getContext('2d');
-const STYLES=['retro','hd','psp','vita'];const STYLE=(()=>{const m=/style=(retro|hd|psp|vita)/.exec(location.search);if(m)return m[1];if(/retro=1/.test(location.search))return'retro';try{const s=localStorage.getItem('aoe_style');if(STYLES.includes(s))return s;if(localStorage.getItem('aoe_retro')=='1')return'retro'}catch(e){}return'hd'})();const RETRO=STYLE=='retro',NATIVE=STYLE=='psp'||STYLE=='vita';const GBA_K={retro:1,hd:3,psp:.75,vita:1.5}[STYLE];const L=document.createElement('canvas');L.width=W*GBA_K;L.height=H*GBA_K;const G=L.getContext('2d');
+const STYLES=['hd','psp','vita','gc'];const STYLE=(()=>{const m=/style=(retro|hd|psp|vita|gc)/.exec(location.search);if(m)return m[1]=='retro'?'hd':m[1];try{const s=localStorage.getItem('aoe_style');if(s=='retro'||localStorage.getItem('aoe_retro')){localStorage.setItem('aoe_style','hd');localStorage.removeItem('aoe_retro');return'hd'}if(STYLES.includes(s))return s}catch(e){}return'hd'})();const RETRO=false,NATIVE=STYLE=='psp'||STYLE=='vita',SMOOTHBLIT=NATIVE||STYLE=='gc';const GBA_K={hd:3,psp:.75,vita:1.5,gc:1.5}[STYLE];const L=document.createElement('canvas');L.width=W*GBA_K;L.height=H*GBA_K;const G=L.getContext('2d');
 X.imageSmoothingEnabled=false;G.imageSmoothingEnabled=false;
 // ---------- RNG / noise ----------
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
