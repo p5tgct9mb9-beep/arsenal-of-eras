@@ -2,7 +2,7 @@
 // Arsenal of Eras - HD preview. 640x360 pixel scene, 3x scaled to 1920x1080, HUD at full res.
 const W=640,H=360,S=3;
 const C=document.getElementById('c'),X=C.getContext('2d');
-const RETRO=/retro=1/.test(location.search)||(()=>{try{return localStorage.getItem('aoe_retro')=='1'}catch(e){return false}})();const GBA_K=RETRO?1:3;const L=document.createElement('canvas');L.width=W*GBA_K;L.height=H*GBA_K;const G=L.getContext('2d');
+const STYLES=['retro','hd','psp','vita'];const STYLE=(()=>{const m=/style=(retro|hd|psp|vita)/.exec(location.search);if(m)return m[1];if(/retro=1/.test(location.search))return'retro';try{const s=localStorage.getItem('aoe_style');if(STYLES.includes(s))return s;if(localStorage.getItem('aoe_retro')=='1')return'retro'}catch(e){}return'hd'})();const RETRO=STYLE=='retro',NATIVE=STYLE=='psp'||STYLE=='vita';const GBA_K={retro:1,hd:3,psp:.75,vita:1.5}[STYLE];const L=document.createElement('canvas');L.width=W*GBA_K;L.height=H*GBA_K;const G=L.getContext('2d');
 X.imageSmoothingEnabled=false;G.imageSmoothingEnabled=false;
 // ---------- RNG / noise ----------
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -14,23 +14,26 @@ function n2(x,y){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf
 const fbm=(x,y)=>n2(x,y)*.6+n2(x*2.1,y*2.1)*.3+n2(x*4.3,y*4.3)*.1;
 const cl=v=>v<0?0:v>255?255:v|0;
 const bay=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
-function lit(c,l,i,j){let b=l+(bay[(j&3)*4+(i&3)]/16-.5)*.16;b=Math.round(b*8)/8;
+function lit(c,l,i,j){let b=l;if((PB.K||1)==1){b=l+(bay[(j&3)*4+(i&3)]/16-.5)*.16;b=Math.round(b*8)/8}
  return[cl(c[0]*b+(b>1?(b-1)*60:0)),cl(c[1]*b+(b>1?(b-1)*45:0)),cl(c[2]*b+(b<1?(1-b)*28:0))]}
 const mix=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
 // ---------- pixel buffer ----------
-class PB{constructor(w,h){this.w=w;this.h=h;this.d=new Array(w*h).fill(null)}
- set(x,y,c){x|=0;y|=0;if(x>=0&&y>=0&&x<this.w&&y<this.h)this.d[y*this.w+x]=c}
- get(x,y){return(x>=0&&y>=0&&x<this.w&&y<this.h)?this.d[y*this.w+x]:null}
- ell(cx,cy,rx,ry,f){for(let j=Math.floor(cy-ry);j<=cy+ry;j++)for(let i=Math.floor(cx-rx);i<=cx+rx;i++){const dx=(i+.5-cx)/rx,dy=(j+.5-cy)/ry,r=dx*dx+dy*dy;if(r<=1)this.set(i,j,f(i,j,dx,dy,r))}}
- rect(x,y,w,h,f){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)this.set(i,j,f(i,j,(i-x)/(w-1||1)*2-1,(j-y)/(h-1||1)*2-1))}
- poly(p,f){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const[a,b]of p){x0=Math.min(x0,a);x1=Math.max(x1,a);y0=Math.min(y0,b);y1=Math.max(y1,b)}
+class PB{constructor(w,h){const k=PB.K||1;this.k=k;this.lw=w;this.lh=h;this.w=Math.round(w*k);this.h=Math.round(h*k);this.d=new Array(this.w*this.h).fill(null)}
+ sr(x,y,c){if(x>=0&&y>=0&&x<this.w&&y<this.h)this.d[y*this.w+x]=c}
+ set(x,y,c){const k=this.k;if(k==1){x|=0;y|=0;if(x>=0&&y>=0&&x<this.w&&y<this.h)this.d[y*this.w+x]=c;return}x=Math.floor(x);y=Math.floor(y);const X0=Math.round(x*k),Y0=Math.round(y*k),X1=Math.round((x+1)*k),Y1=Math.round((y+1)*k);for(let j=Y0;j<Y1;j++)for(let i=X0;i<X1;i++)this.sr(i,j,c)}
+ get(x,y){const k=this.k;if(k!=1){x=Math.floor((Math.floor(x)+.5)*k);y=Math.floor((Math.floor(y)+.5)*k)}return(x>=0&&y>=0&&x<this.w&&y<this.h)?this.d[y*this.w+x]:null}
+ ell(cx,cy,rx,ry,f){const k=this.k;if(k!=1){cx*=k;cy*=k;rx*=k;ry*=k}for(let j=Math.floor(cy-ry);j<=cy+ry;j++)for(let i=Math.floor(cx-rx);i<=cx+rx;i++){const dx=(i+.5-cx)/rx,dy=(j+.5-cy)/ry,r=dx*dx+dy*dy;if(r<=1)this.sr(i,j,f(i/k,j/k,dx,dy,r))}}
+ rect(x,y,w,h,f){const k=this.k;if(k==1){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)this.set(i,j,f(i,j,(i-x)/(w-1||1)*2-1,(j-y)/(h-1||1)*2-1));return}
+  const X0=Math.round(x*k),Y0=Math.round(y*k),X1=Math.round((x+w)*k),Y1=Math.round((y+h)*k);for(let j=Y0;j<Y1;j++)for(let i=X0;i<X1;i++)this.sr(i,j,f(i/k,j/k,(i-X0)/(X1-X0-1||1)*2-1,(j-Y0)/(Y1-Y0-1||1)*2-1))}
+ poly(p,f){const k=this.k;if(k!=1)p=p.map(([a,b])=>[a*k,b*k]);let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const[a,b]of p){x0=Math.min(x0,a);x1=Math.max(x1,a);y0=Math.min(y0,b);y1=Math.max(y1,b)}
   for(let j=Math.floor(y0);j<=y1;j++)for(let i=Math.floor(x0);i<=x1;i++){const px=i+.5,py=j+.5;let ins=false;
-   for(let k=0,m=p.length-1;k<p.length;m=k++){const[xa,ya]=p[k],[xb,yb]=p[m];if((ya>py)!=(yb>py)&&px<(xb-xa)*(py-ya)/(yb-ya)+xa)ins=!ins}
-   if(ins)this.set(i,j,f(i,j,(i-x0)/(x1-x0||1)*2-1,(j-y0)/(y1-y0||1)*2-1))}}
- line(x0,y0,x1,y1,c){const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))|0;for(let k=0;k<=n;k++)this.set(Math.round(x0+(x1-x0)*k/n),Math.round(y0+(y1-y0)*k/n),typeof c=='function'?c(k):c)}
- outline(c){const o=this.d.slice();for(let y=0;y<this.h;y++)for(let x=0;x<this.w;x++)if(!o[y*this.w+x]){
-  if((x>0&&o[y*this.w+x-1])||(x<this.w-1&&o[y*this.w+x+1])||(y>0&&o[(y-1)*this.w+x])||(y<this.h-1&&o[(y+1)*this.w+x]))this.d[y*this.w+x]=c}}
- canvas(white){const c=document.createElement('canvas');c.width=this.w;c.height=this.h;const g=c.getContext('2d'),id=g.createImageData(this.w,this.h);
+   for(let q=0,m=p.length-1;q<p.length;m=q++){const[xa,ya]=p[q],[xb,yb]=p[m];if((ya>py)!=(yb>py)&&px<(xb-xa)*(py-ya)/(yb-ya)+xa)ins=!ins}
+   if(ins)this.sr(i,j,f(i/k,j/k,(i-x0)/(x1-x0||1)*2-1,(j-y0)/(y1-y0||1)*2-1))}}
+ line(x0,y0,x1,y1,c){const k=this.k;if(k!=1){x0=(x0+.5)*k;y0=(y0+.5)*k;x1=(x1+.5)*k;y1=(y1+.5)*k;const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))|0||1,t=Math.max(1,Math.round(k*.7));for(let q=0;q<=n;q++){const X=Math.floor(x0+(x1-x0)*q/n-t/2),Y=Math.floor(y0+(y1-y0)*q/n-t/2);const cc=typeof c=='function'?c(q/k):c;for(let a=0;a<t;a++)for(let b=0;b<t;b++)this.sr(X+a,Y+b,cc)}return}
+  const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))|0;for(let q=0;q<=n;q++)this.set(Math.round(x0+(x1-x0)*q/n),Math.round(y0+(y1-y0)*q/n),typeof c=='function'?c(q):c)}
+ outline(c){const passes=this.k>1?Math.max(1,Math.round(this.k*.75)):1;for(let p=0;p<passes;p++){const o=this.d.slice();for(let y=0;y<this.h;y++)for(let x=0;x<this.w;x++)if(!o[y*this.w+x]){
+  if((x>0&&o[y*this.w+x-1])||(x<this.w-1&&o[y*this.w+x+1])||(y>0&&o[(y-1)*this.w+x])||(y<this.h-1&&o[(y+1)*this.w+x]))this.d[y*this.w+x]=c}}}
+ canvas(white){const c=document.createElement('canvas');c.width=this.w;c.height=this.h;c.__lw=this.lw;c.__lh=this.lh;const g=c.getContext('2d'),id=g.createImageData(this.w,this.h);
   for(let k=0;k<this.d.length;k++){const p=this.d[k];if(p){id.data[k*4]=white?255:p[0];id.data[k*4+1]=white?255:p[1];id.data[k*4+2]=white?255:p[2];id.data[k*4+3]=p[3]==null?255:p[3]}}
   g.putImageData(id,0,0);return c}}
 const OUT=[22,16,14];

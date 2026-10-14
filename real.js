@@ -3,18 +3,19 @@
 // 7-step ramps, top-light + edge highlights, panel lines, rivets, road wheels/tracks, weathering. Native 640x360.
 const RLC=new Map();
 function rRamp(b){const k=b.join();if(RLC.has(k))return RLC.get(k);const r=[mix(b,[14,16,22],.72),mix(b,[18,20,26],.52),mix(b,[24,26,32],.3),b,mix(b,[250,244,222],.13),mix(b,[255,250,232],.28),mix(b,[255,252,242],.46)].map(c=>c.map(v=>v|0));RLC.set(k,r);return r}
-const rTone=(b,l,i,j)=>{const r=rRamp(b);l+=(bay[(j&3)*4+(i&3)]/16-.5)*.06;return r[Math.max(0,Math.min(6,Math.round(l*6)))]};
+const rTone=(b,l,i,j)=>{const r=rRamp(b);if((PB.K||1)>1){const t=Math.max(0,Math.min(5.999,l*6)),a=t|0,f=t-a;const A=r[a],B=r[a+1];return[A[0]+(B[0]-A[0])*f|0,A[1]+(B[1]-A[1])*f|0,A[2]+(B[2]-A[2])*f|0]}l+=(bay[(j&3)*4+(i&3)]/16-.5)*.06;return r[Math.max(0,Math.min(6,Math.round(l*6)))]};
+const RSPEC={psp:.3,vita:.22};
 // filled part with ramp shading + bevel (top/left lit edge, bottom/right shadow edge)
-function rPart(pb,pts,base,o={}){const S=new Map(),w=pb.w,top=o.top!=null?o.top:.74,bot=o.bot!=null?o.bot:.36;
- const f=(i,j,nx,ny)=>{let l=top+(bot-top)*(ny+1)/2+(o.lx||0)*nx;if(o.round)l-=Math.abs(ny)*o.round;S.set(j*w+i,l);return[0,0,0]};
- if(o.ell)pb.ell(o.ell[0],o.ell[1],o.ell[2],o.ell[3],(i,j,dx,dy)=>{S.set(j*w+i,(o.top!=null?o.top:.62)-.32*dy-.1*dx);return[0,0,0]});else pb.poly(pts,f);
- const bev=o.bev!=null?o.bev:1;
- for(const[idx,l0]of S){const i=idx%w,j=idx/w|0;let l=l0;if(bev){if(!S.has(idx-w))l+=.28*bev;else if(!S.has(idx+w))l-=.22*bev;if(!S.has(idx-1)&&S.has(idx-w))l+=.08*bev;if(!S.has(idx+1))l-=.1*bev}
-  const b=typeof base=='function'?base(i,j):base;pb.d[idx]=rTone(b,l,i,j)}return S}
+function rPart(pb,pts,base,o={}){const S=new Map(),w=pb.w,K=pb.k||1,spec=K>1?(RSPEC[STYLE]||0):0,top=o.top!=null?o.top:.74,bot=o.bot!=null?o.bot:.36;
+ const ix=(i,j)=>K==1?j*w+i:Math.round(j*K)*w+Math.round(i*K);const f=(i,j,nx,ny)=>{const t=(ny+1)/2;let l=top+(bot-top)*t+(o.lx||0)*nx;if(o.round)l-=Math.abs(ny)*o.round;if(spec)l+=spec*Math.exp(-(((t-.16)/.09)**2));S.set(ix(i,j),l);return[0,0,0]};
+ if(o.ell)pb.ell(o.ell[0],o.ell[1],o.ell[2],o.ell[3],(i,j,dx,dy)=>{let l=(o.top!=null?o.top:.62)-.32*dy-.1*dx;if(spec)l+=spec*1.3*Math.exp(-(((dx+.35)/.3)**2+((dy+.45)/.25)**2));S.set(ix(i,j),l);return[0,0,0]});else pb.poly(pts,f);
+ const bev=o.bev!=null?o.bev:1,bw=K>1?Math.max(1,Math.round(K*.7)):1,has=(q,d)=>{for(let z=1;z<=bw;z++)if(!S.has(q+d*z))return false;return true};
+ for(const[idx,l0]of S){const i=idx%w,j=idx/w|0;let l=l0;if(bev){if(!has(idx,-w))l+=.28*bev;else if(!has(idx,w))l-=.22*bev;if(!has(idx,-1)&&S.has(idx-w))l+=.08*bev;if(!has(idx,1))l-=.1*bev}
+  const b=typeof base=='function'?base(i/K,j/K):base;pb.d[idx]=rTone(b,l,i,j)}return S}
 const rE=(pb,cx,cy,rx,ry,base,o={})=>rPart(pb,null,base,Object.assign({ell:[cx,cy,rx,ry]},o));
 const rR=(pb,x,y,w,h,base,o)=>rPart(pb,[[x,y],[x+w,y],[x+w,y+h],[x,y+h]],base,o);
 const rDk=(c,f=.35)=>mix(c,[10,10,14],f).map(v=>v|0),rLt=(c,f=.25)=>mix(c,[255,250,232],f).map(v=>v|0);
-function rLine(pb,x0,y0,x1,y1,hl=1){const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))|0||1;for(let k=0;k<=n;k++){const x=Math.round(x0+(x1-x0)*k/n),y=Math.round(y0+(y1-y0)*k/n),p=pb.get(x,y);if(!p)continue;pb.set(x,y,rDk(p,.4));
+function rLine(pb,x0,y0,x1,y1,hl=1){if((pb.k||1)>1){const k=pb.k,X0=(x0+.5)*k,Y0=(y0+.5)*k,X1=(x1+.5)*k,Y1=(y1+.5)*k,n=Math.max(Math.abs(X1-X0),Math.abs(Y1-Y0))|0||1,vert=Math.abs(X1-X0)<Math.abs(Y1-Y0);for(let q=0;q<=n;q++){const x=Math.round(X0+(X1-X0)*q/n),y=Math.round(Y0+(Y1-Y0)*q/n),id=y*pb.w+x;if(x<0||y<0||x>=pb.w||y>=pb.h)continue;const p=pb.d[id];if(!p)continue;pb.d[id]=rDk(p,.45);if(hl){const id2=vert?id+1:id+pb.w,q2=pb.d[id2];if(q2)pb.d[id2]=rLt(q2,.16)}}return}const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))|0||1;for(let k=0;k<=n;k++){const x=Math.round(x0+(x1-x0)*k/n),y=Math.round(y0+(y1-y0)*k/n),p=pb.get(x,y);if(!p)continue;pb.set(x,y,rDk(p,.4));
  if(hl){const q=x0==x1?pb.get(x+1,y):pb.get(x,y+1);if(q)x0==x1?pb.set(x+1,y,rLt(q,.14)):pb.set(x,y+1,rLt(q,.14))}}}
 function rRiv(pb,x0,y,x1,st){for(let x=x0;x<=x1;x+=st){const p=pb.get(x,y);if(p){pb.set(x,y,rLt(p,.35));const q=pb.get(x,y+1);if(q)pb.set(x,y+1,rDk(q,.35))}}}
 function rSolid(pb,pts,c){pb.poly(pts,()=>c)}
@@ -29,8 +30,8 @@ function rTrack(pb,x0,x1,yt,yb,o={}){const ch=o.ch||6,fl=o.fl||0;const pts=[[x0+
  for(let x=x0+ch;x<x1-ch;x+=3){pb.set(x,yt,rRamp(T)[5]);pb.set(x,yb-1,rRamp(T)[1]);pb.set(x+1,yb,[22,22,22])}}
 function rStar(pb,cx,cy,r){const p=[];for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,rr=k%2?r*.42:r;p.push([cx+.5+Math.cos(a)*rr,cy+.5+Math.sin(a)*rr])}pb.poly(p,(i,j)=>pb.get(i,j)?[214,212,196]:null)}
 // weathering: dust toward the bottom, noise mottling, paint chips
-function rWeather(pb,dust,amt=1){const h=pb.h;for(let j=0;j<h;j++)for(let i=0;i<pb.w;i++){const p=pb.d[j*pb.w+i];if(!p)continue;let c=p;const n=fbm(i*.07,j*.09),t=Math.max(0,(j/h-.6)/.4)*.38*amt+(n>.64?.1*amt:0);
- c=mix(c,dust,Math.min(.6,t*(.5+n)));const hh=hash(i*7+3,j*13+5);if(hh<.004*amt)c=mix(c,[30,28,24],.45);else if(hh>1-.003*amt)c=mix(c,[230,224,200],.25);pb.d[j*pb.w+i]=c.map(v=>v|0)}}
+function rWeather(pb,dust,amt=1){const h=pb.h,K=pb.k||1;for(let j=0;j<h;j++)for(let i=0;i<pb.w;i++){const p=pb.d[j*pb.w+i];if(!p)continue;let c=p;const n=fbm(i/K*.07,j/K*.09),t=Math.max(0,(j/h-.6)/.4)*.38*amt+(n>.64?.1*amt:0);
+ c=mix(c,dust,Math.min(.6,t*(.5+n)));const hh=hash((i/K|0)*7+3,(j/K|0)*13+5);if(hh<.004*amt)c=mix(c,[30,28,24],.45);else if(hh>1-.003*amt)c=mix(c,[230,224,200],.25);pb.d[j*pb.w+i]=c.map(v=>v|0)}}
 function rCamo(cols,sc=.06,seed=0){return(i,j)=>{const a=fbm(i*sc+seed,j*sc*1.6+seed),b=fbm(i*sc*1.3+40+seed,j*sc*1.8+11);return a>.6?cols[1]:(cols[2]&&b>.63)?cols[2]:cols[0]}}
 function rFin(pb,o){pb.outline(OUT);return pb}
 // ---------------- palettes ----------------

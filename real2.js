@@ -1,10 +1,10 @@
 'use strict';
 // ---- Realism pass 2: hand-built soldiers (32x48, ~6.5 heads tall), enemy robots/drones, boss vehicles, terrain, particles.
 // ===================== SOLDIERS =====================
-function rSeg(pb,x0,y0,x1,y1,r0,r1,colf,dk=0){const dx=x1-x0,dy=y1-y0,L2=dx*dx+dy*dy||1,len=Math.sqrt(L2),nx=-dy/len,ny=dx/len;
- const bx0=Math.floor(Math.min(x0,x1)-r0-1),bx1=Math.ceil(Math.max(x0,x1)+r0+1),by0=Math.floor(Math.min(y0,y1)-r0-1),by1=Math.ceil(Math.max(y0,y1)+r0+1);
- for(let j=by0;j<=by1;j++)for(let i=bx0;i<=bx1;i++){const px=i+.5-x0,py=j+.5-y0;let t=(px*dx+py*dy)/L2;t=Math.max(0,Math.min(1,t));const qx=px-dx*t,qy=py-dy*t,d=Math.hypot(qx,qy),r=r0+(r1-r0)*t;if(d>r)continue;
-  const side=(qx*.8-qy*.6)/(r||1);let l=.58+.24*side-dk;if(d>r-.8)l-=.12;pb.set(i,j,rTone(colf(i,j),l,i,j))}}
+function rSeg(pb,x0,y0,x1,y1,r0,r1,colf,dk=0){const K=pb.k||1;const dx=x1-x0,dy=y1-y0,L2=dx*dx+dy*dy||1;
+ const bx0=Math.floor((Math.min(x0,x1)-r0-1)*K),bx1=Math.ceil((Math.max(x0,x1)+r0+1)*K),by0=Math.floor((Math.min(y0,y1)-r0-1)*K),by1=Math.ceil((Math.max(y0,y1)+r0+1)*K),ew=.8;
+ for(let J=by0;J<=by1;J++)for(let I=bx0;I<=bx1;I++){const i=I/K,j=J/K,px=(I+.5)/K-x0,py=(J+.5)/K-y0;let t=(px*dx+py*dy)/L2;t=Math.max(0,Math.min(1,t));const qx=px-dx*t,qy=py-dy*t,d=Math.hypot(qx,qy),r=r0+(r1-r0)*t;if(d>r)continue;
+  const side=(qx*.8-qy*.6)/(r||1);let l=.58+.24*side-dk;if(K>1){l+=(RSPEC[STYLE]||0)*Math.exp(-(((side-.55)/.25)**2))}if(d>r-ew/(K>1?1.4:1))l-=.12;pb.sr(I,J,rTone(colf(i,j),l,I,J))}}
 function rBlob(pb,pts,colf,o={}){rPart(pb,pts,colf,Object.assign({top:.74,bot:.42,lx:.12},o))}
 const SKINS=[[214,168,132],[176,124,92],[132,90,64],[224,184,150],[150,104,76]];
 function rCamoU(u){const C0=u.col,seed=u.key.length*13+u.key.charCodeAt(0);return(i,j)=>{const v=fbm(i*.28+seed,j*.22),w=fbm(i*.33+seed+40,j*.3+9);switch(u.camo){
