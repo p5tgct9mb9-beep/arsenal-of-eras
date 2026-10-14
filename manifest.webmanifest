@@ -1,2 +1,2 @@
-{"name":"Arsenal of Eras","short_name":"Arsenal","start_url":"./index.html","scope":"./","display":"fullscreen","orientation":"landscape","background_color":"#000000","theme_color":"#000000",
+{"name":"Arsenal of Eras: Frontline","short_name":"Arsenal FPS","start_url":"./index.html","scope":"./","display":"fullscreen","orientation":"landscape","background_color":"#000000","theme_color":"#0b0d12",
 "icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}

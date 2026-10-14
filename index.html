@@ -1,3 +1,65 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Arsenal of Eras"><meta name="theme-color" content="#000000"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" href="icons/icon-192.png"><title>Arsenal of Eras — HD Preview</title>
-<style>html,body{margin:0;background:#000;height:100%;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}canvas{display:block;width:100vw;height:56.25vw;max-height:100vh;max-width:177.78vh;margin:auto;position:absolute;inset:0;image-rendering:pixelated}</style></head>
-<body><canvas id="c" width="1920" height="1080"></canvas><script src="engine.js"></script><script src="gba.js"></script><script src="font.js"></script><script src="art.js"></script><script src="art2.js"></script><script src="art3.js"></script><script src="art4.js"></script><script src="art5.js"></script><script src="real.js"></script><script src="real2.js"></script><script src="hd.js"></script><script src="world.js"></script><script src="assault.js"></script><script src="modes.js"></script><script src="tutorial.js"></script><script src="aces.js"></script><script>if(STYLE=="gc"||STYLE=="x360")document.write('<script src="three.slim.min.js"><\/script><script src="gc3d.js"><\/script>')</script><script src="main.js"></script><script src="touch.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Arsenal of Eras: Frontline</title><meta name="theme-color" content="#0b0d12"><link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#000;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e8ecf0}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#menu{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:max(14px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 14px max(18px,env(safe-area-inset-left));background:linear-gradient(90deg,rgba(5,8,12,.82),rgba(5,8,12,.35) 55%,rgba(5,8,12,.1));overflow:auto}
+.ttl{text-align:center}.ttl h1{margin:0;font-size:clamp(28px,6vw,64px);letter-spacing:.12em;font-weight:900;background:linear-gradient(#fff,#ffc24a);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 4px 30px rgba(255,180,60,.25)}
+.ttl h2{margin:2px 0 8px;font-size:clamp(12px,2vw,18px);letter-spacing:.5em;color:#9fc6ff}
+h3{margin:4px 0;letter-spacing:.2em;font-size:clamp(16px,2.6vw,26px)}h4{margin:8px 0 4px;color:#ffc24a;font-size:13px;letter-spacing:.15em;text-transform:uppercase}.sub{opacity:.75;margin:0;font-size:13px;text-align:center}
+.col{display:flex;flex-direction:column;gap:8px;min-width:min(340px,80vw)}.col.wide{max-width:640px}
+.b{padding:10px 16px;background:rgba(20,26,36,.78);border:1px solid rgba(160,190,230,.25);border-radius:6px;cursor:pointer;font-weight:600;font-size:15px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:background .1s}
+.b.f,.b:hover{background:rgba(255,190,70,.22);border-color:#ffc24a}.b.on{border-color:#7fd0ff;box-shadow:inset 3px 0 0 #7fd0ff}.b small{display:block;font-weight:400;opacity:.7;font-size:11px}
+.cards{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.card{width:150px;display:flex;flex-direction:column;gap:3px}.card i{color:#ffc24a;font-style:normal}.card span{font-size:12px;opacity:.8;font-weight:400}.card em{color:#ffc24a;font-style:normal}
+.mis b{display:block}.mis span{display:block;font-weight:400;font-size:13px;opacity:.85;margin:3px 0}.mis em{font-size:11px;color:#9fc6ff;font-style:normal}
+.lo{display:flex;gap:12px;width:100%;height:100%;align-items:stretch}.pane{display:flex;flex-direction:column;gap:5px;width:30%;min-width:200px;overflow:auto;max-height:100%}.pane.mid{width:28%}.pane.stats{margin-left:auto;width:26%;justify-content:flex-end}
+.slot{font-size:13px;padding:6px 10px}.opt{font-size:13px;padding:7px 10px}
+.st{display:flex;align-items:center;gap:6px;font-size:11px}.st span{width:72px;opacity:.8}.st i{flex:1;height:6px;background:rgba(255,255,255,.12);position:relative;border-radius:3px}.st u{position:absolute;left:0;top:0;bottom:0;background:#7fd0ff;border-radius:3px}.st s{position:absolute;top:-2px;bottom:-2px;width:2px;background:#ffc24a}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:900px;font-size:13px}.ctl div{background:rgba(20,26,36,.75);padding:10px;border-radius:6px}.ctl b{display:block;color:#ffc24a;margin-bottom:4px}
+.foot{opacity:.6;font-size:12px}.res{font-size:16px;text-align:center;margin:6px}
+#hud{position:fixed;inset:0;pointer-events:none;display:none;text-shadow:0 1px 2px #000}
+#xh{position:absolute;left:50%;top:50%;--g:6px}#xh i{position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 2px #000}#xh i:nth-child(1){width:2px;height:8px;left:-1px;top:calc(-8px - var(--g))}#xh i:nth-child(2){width:2px;height:8px;left:-1px;top:var(--g)}#xh i:nth-child(3){height:2px;width:8px;top:-1px;left:calc(-8px - var(--g))}#xh i:nth-child(4){height:2px;width:8px;top:-1px;left:var(--g)}
+#hm{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px;opacity:0;border:2px solid #fff;transform:rotate(45deg);clip-path:polygon(0 0,30% 0,30% 30%,0 30%,0 0,70% 0,100% 0,100% 30%,70% 30%,70% 0,100% 70%,100% 100%,70% 100%,70% 70%,100% 70%,0 70%,30% 70%,30% 100%,0 100%)}
+#tl{position:absolute;left:max(12px,env(safe-area-inset-left));top:10px;font-size:13px;white-space:pre-line}#obj{background:rgba(0,0,0,.35);padding:6px 9px;border-left:3px solid #ffc24a;border-radius:3px;line-height:1.45}
+#mm{position:absolute;right:max(12px,env(safe-area-inset-right));top:10px;width:120px;height:120px}
+#bl{position:absolute;left:max(12px,env(safe-area-inset-left));bottom:12px;width:230px}#hpw{height:8px;background:rgba(0,0,0,.5);border-radius:4px;overflow:hidden;margin-top:3px}#hpb{height:100%;background:linear-gradient(90deg,#4ce08a,#c8ff8a);width:100%}#hp{font-weight:700;font-size:13px}#ar{font-size:11px;color:#9fc6ff}#eq{font-size:11px;opacity:.85;margin-top:4px}
+#br{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:12px;text-align:right}#ammo{font-size:30px;font-weight:800}#wn{font-size:12px;opacity:.85}
+#prompt{position:absolute;left:50%;top:62%;transform:translateX(-50%);font-weight:700;color:#7fd0ff}#toast{position:absolute;left:50%;top:22%;transform:translateX(-50%);font-weight:700;font-size:15px;opacity:0;transition:opacity .4s;text-align:center;max-width:80vw}
+#feed{position:absolute;right:150px;top:12px;font-size:12px;text-align:right;color:#ffd890}
+#boss{position:absolute;left:50%;top:10px;transform:translateX(-50%);width:min(420px,50vw);display:none;text-align:center;font-weight:800;font-size:13px;color:#ff8080;letter-spacing:.1em}#bossw{height:8px;background:rgba(0,0,0,.6);border:1px solid #ff5050;margin-top:3px}#bossb{height:100%;background:linear-gradient(90deg,#ff3030,#ff9040);width:100%}
+#mk .mk{position:absolute;left:0;top:0;font-size:11px;font-weight:700;white-space:nowrap;margin:-8px 0 0 -10px}
+#scope{position:absolute;inset:0;display:none;background:radial-gradient(circle at 50% 50%,transparent 0,transparent 33vh,#000 33.5vh)}#scope:before,#scope:after{content:"";position:absolute;background:#000}#scope:before{left:0;right:0;top:50%;height:1px}#scope:after{top:0;bottom:0;left:50%;width:1px}
+#drone{position:absolute;inset:0;display:none;border:2px solid rgba(120,255,140,.4);background:repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0 2px,transparent 2px 4px)}#drone b{position:absolute;left:50%;top:14%;transform:translateX(-50%);color:#8f8;letter-spacing:.3em;font-size:13px}#drone i{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px;border:2px solid rgba(140,255,150,.7);border-radius:50%}
+#fb{position:absolute;inset:0;background:#fff;opacity:0}#lock{position:absolute;left:50%;top:56%;transform:translateX(-50%);color:#ff5050;font-weight:800;display:none;letter-spacing:.2em}#alt{position:absolute;left:58%;top:48%;font-size:12px;color:#8f8}
+#brief{position:absolute;left:50%;bottom:22%;transform:translateX(-50%);background:rgba(0,0,0,.55);padding:8px 14px;border-radius:6px;max-width:70vw;text-align:center;transition:opacity 1s}#brief b{display:block;color:#ffc24a}#brief span{font-size:13px}
+#touch{position:fixed;inset:0;display:none;z-index:5}#touch [data-k]{position:absolute;width:54px;height:54px;border-radius:50%;background:rgba(20,26,36,.45);border:1.5px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+#touch [data-k].dn{background:rgba(255,190,70,.45)}#touch [data-k=fire]{width:80px;height:80px;right:calc(26px + env(safe-area-inset-right));bottom:70px;font-size:14px;background:rgba(200,50,40,.4)}
+#stick{position:absolute;width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.3);display:none;background:rgba(0,0,0,.15)}#knob{position:absolute;left:36px;top:36px;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.35)}
+body.touch #mm{width:92px;height:92px}body.touch #br{bottom:auto;top:8px;right:calc(112px + env(safe-area-inset-right))}body.touch #ammo{font-size:22px}body.touch #feed{right:220px}body.touch #touch [data-k]{width:50px;height:50px}body.touch #touch [data-k=fire]{width:78px;height:78px;bottom:58px}
+body[data-mode=air] #xh,body[data-mode=veh] #xh{display:block}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="hud"><div id="mk"></div><div id="xh"><i></i><i></i><i></i><i></i></div><div id="hm"></div><div id="scope"></div><div id="drone"><b>DRONE FEED</b><i></i></div>
+<div id="tl"><div id="obj"></div></div><canvas id="mm" width="120" height="120"></canvas><div id="feed"></div><div id="boss"><span id="bossn"></span><div id="bossw"><div id="bossb"></div></div></div>
+<div id="bl"><div id="hp"></div><div id="hpw"><div id="hpb"></div></div><div id="ar"></div><div id="eq"></div></div><div id="br"><div id="ammo"></div><div id="wn"></div></div>
+<div id="prompt"></div><div id="toast"></div><div id="lock"></div><div id="alt"></div><div id="brief"></div><div id="fb"></div></div>
+<div id="touch"><div id="stick"><div id="knob"></div></div>
+<div data-k="fire">FIRE</div>
+<div data-k="ads" style="right:calc(118px + env(safe-area-inset-right));bottom:118px">ADS</div>
+<div data-k="jump" style="right:calc(118px + env(safe-area-inset-right));bottom:44px">⤒</div>
+<div data-k="crouch" style="right:calc(180px + env(safe-area-inset-right));bottom:12px">⤓</div>
+<div data-k="reload" style="right:calc(28px + env(safe-area-inset-right));bottom:154px">RLD</div>
+<div data-k="swap" style="right:calc(88px + env(safe-area-inset-right));bottom:180px">SWAP</div>
+<div data-k="gren" style="right:calc(180px + env(safe-area-inset-right));bottom:74px">💣</div>
+<div data-k="tact" style="right:calc(180px + env(safe-area-inset-right));bottom:136px">TAC</div>
+<div data-k="gadget" style="right:calc(242px + env(safe-area-inset-right));bottom:40px">GAD</div>
+<div data-k="use" style="right:calc(242px + env(safe-area-inset-right));bottom:104px">USE</div>
+<div data-k="med" style="left:calc(14px + env(safe-area-inset-left));bottom:100px;width:44px;height:44px">✚</div>
+<div data-k="pause" style="left:50%;margin-left:-22px;top:6px;width:44px;height:36px;border-radius:8px">II</div>
+</div>
+<div id="menu"></div>
+<script src="three.slim.min.js"></script><script src="data.js"></script><script src="models.js"></script><script src="world.js"></script><script src="game.js"></script><script src="mp.js"></script><script src="ui.js"></script>
+</body></html>
